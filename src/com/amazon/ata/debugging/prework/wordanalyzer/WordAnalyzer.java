@@ -1,5 +1,9 @@
 package com.amazon.ata.debugging.prework.wordanalyzer;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A class that finds character patterns in words.
  * Adapted from http://www.horstmann.com/bigj/help/debugger/tutorial.html
@@ -25,15 +29,17 @@ public class WordAnalyzer {
      * @return the first repeated character, or 0 if none found.
      */
     public char firstRepeatedCharacter() {
-        for (int i = 1; i < word.length() - 1; i++) {
+        for (int i = 0; i < word.length() - 1; i++) {
             char current = word.charAt(i);
-            char adjacent = word.charAt(i + 1);
-            if (current == adjacent) {
-                return current;
+            for (int j = i + 1; j < word.length(); j++) {
+                if (current == word.charAt(j) && j == i+1) {
+                    return current;
+                }
             }
         }
         return 0;
     }
+
 
     /**
      * Gets the first multiply occurring character. A character is <i>multiple</i>
@@ -47,7 +53,7 @@ public class WordAnalyzer {
     public char firstMultipleCharacter() {
         for (int i = 0; i < word.length(); i++) {
             char ch = word.charAt(i);
-            if (find(ch, i) >= 0) {
+            if (find(ch, i + 1) >= 0) {
                 return ch;
             }
         }
@@ -79,18 +85,30 @@ public class WordAnalyzer {
      */
     public int countRepeatedCharacters() {
         int numGroups = 0;
-        for (int i = 1; i < word.length() - 1; i++) {
-            // Is the next character part of the repeat?
-            if (word.charAt(i) == word.charAt(i + 1)) {
-                // Is this the start of the repeat?
-                if (!repeatsPreviousCharacter(i)) {
-                    numGroups++;
-                }
+        char currGroup = ' ';
+        char prevChar = ' ';
+        for (int i = 0; i < word.length(); i++) {
+            char currChar = word.charAt(i);
+            if (currChar != prevChar) {
+                // Reset the current group if the current character is different from the previous character
+                currGroup = currChar;
             }
+            // Check if the current character is the same as the previous character and the current group is the same as the current character
+            if (currChar == prevChar && currGroup == currChar) {
+                numGroups++;
+                // Reset the current group so that it does not get counted again
+                currGroup = ' ';
+            }
+            prevChar = currChar;
         }
-
         return numGroups;
     }
+
+
+
+
+
+
 
     /**
      * Checks if the letter at index i is the same as the previous character.
