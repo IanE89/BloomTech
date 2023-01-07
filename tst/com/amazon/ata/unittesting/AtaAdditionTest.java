@@ -65,17 +65,18 @@ public class AtaAdditionTest {
      * When an assumption is found to be incorrect, we must update our test
      * logic and names.
      */
-    public void add_sumOutOfBounds_resultsInValueLargerThanMAX_VALUE() {
+    public void add_sumOutOfBounds_throwsArithmeticException() {
         // GIVEN
         int[] values = {Integer.MAX_VALUE - 5, 3, 3};
         AtaAddition ataAddition = new AtaAddition();
 
-        // WHEN
-        int result = ataAddition.add(values);
-
-        // THEN
-        Assertions.assertTrue(result > Integer.MAX_VALUE - 5,
-                              "Expected summing above MAX_VALUE to result in value above MAX_VALUE");
+        // WHEN + THEN
+        // the following syntax is a little fancy, just know that it's
+        // asserting that when the inner code block calls the add()
+        // method that we should see an `ArithmeticException`
+        Assertions.assertThrows(ArithmeticException.class, () -> {
+            ataAddition.add(values);
+        }, "Summing above MAX_VALUE should result in ArithmeticException thrown");
     }
 
 }
